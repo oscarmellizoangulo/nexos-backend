@@ -9,50 +9,50 @@ import com.nexos.backend.api.beans.GenericMessageVO;
 import com.nexos.backend.api.beans.UserAuthenticationVO;
 import com.nexos.backend.api.beans.UserRecoveryVO;
 import com.nexos.backend.api.beans.UserVO;
-import com.nexos.backend.api.dao.PersonaDAO;
-import com.nexos.backend.api.dao.RolDAO;
-import com.nexos.backend.api.dao.UsuarioDAO;
-import com.nexos.backend.api.dao.UsuarioRolDAO;
 import com.nexos.backend.api.exception.UserNotFoundException;
 import com.nexos.backend.api.model.Persona;
 import com.nexos.backend.api.model.Rol;
 import com.nexos.backend.api.model.Usuario;
 import com.nexos.backend.api.model.UsuarioRol;
+import com.nexos.backend.api.repository.PersonaRepository;
+import com.nexos.backend.api.repository.RolRepository;
+import com.nexos.backend.api.repository.UsuarioRepository;
+import com.nexos.backend.api.repository.UsuarioRolRepository;
 
 @Service
 public class SecurityService {
 	
 	@Autowired
-	private UsuarioDAO usuarioDAO;
+	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
-	private PersonaDAO personaDAO;
+	private PersonaRepository personaRepository;
 	
 	@Autowired
-	private RolDAO rolDAO;
+	private RolRepository rolRepository;
 	
 	@Autowired
-	private UsuarioRolDAO usuarioRolDAO; 
+	private UsuarioRolRepository usuarioRolRepository; 
 	
 	public UserVO authenticate(UserAuthenticationVO userAuthenticationVO) {
-		List<Usuario> result = usuarioDAO.findByNombreUsuarioAndClave(userAuthenticationVO.getUserName(), userAuthenticationVO.getPassword());
+		List<Usuario> result = usuarioRepository.findByNombreUsuarioAndClave(userAuthenticationVO.getUserName(), userAuthenticationVO.getPassword());
 		Usuario usuario = !result.isEmpty() ? result.get(0) : null;
 		
 		if(usuario == null) {
 			throw new UserNotFoundException("Usuario no encontrado o clave invalida");
 		}
 		
-		Persona persona = personaDAO.findById(usuario.getIdPersona()).get();
+		Persona persona = personaRepository.findById(usuario.getIdPersona()).get();
 		
-		UsuarioRol usuarioRol = usuarioRolDAO.findByIdUsuario(usuario.getIdUsuario()).get(0);
+		UsuarioRol usuarioRol = usuarioRolRepository.findByIdUsuario(usuario.getIdUsuario()).get(0);
 		
-		Rol rol = rolDAO.findById(usuarioRol.getIdRol()).get();
+		Rol rol = rolRepository.findById(usuarioRol.getIdRol()).get();
 		
 		return new UserVO(usuario.getNombreUsuario(), usuario.getCorreoElectronico(), 
 				persona.getPrimerNombre() + persona.getPrimerApellido(), rol.getRol());
 	}
 	public GenericMessageVO recovery(UserRecoveryVO userRecoveryVO) {
-		Usuario usuario = usuarioDAO.findByNombreUsuario(userRecoveryVO.getUserName());
+		Usuario usuario = usuarioRepository.findByNombreUsuario(userRecoveryVO.getUserName());
 		if(usuario == null) {
 			throw new UserNotFoundException("Usuario no encontrado");
 		}

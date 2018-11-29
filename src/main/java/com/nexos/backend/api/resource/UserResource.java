@@ -3,17 +3,13 @@ package com.nexos.backend.api.resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nexos.backend.api.beans.UserVO;
 import com.nexos.backend.api.beans.UserAuthenticationVO;
 import com.nexos.backend.api.beans.UserRecoveryVO;
-import com.nexos.backend.api.exception.BeanNotFoundException;
 import com.nexos.backend.api.exception.UserNotFoundException;
 import com.nexos.backend.api.services.SecurityService;
 
