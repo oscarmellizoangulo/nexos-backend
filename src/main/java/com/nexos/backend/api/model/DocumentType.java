@@ -1,45 +1,79 @@
 package com.nexos.backend.api.model;
 
+import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+
+/**
+ * The persistent class for the document_type database table.
+ * 
+ */
 @Entity
-@Table(name = "tipo_documento")
-public class DocumentType {
+@Table(name="document_type")
+@NamedQuery(name="DocumentType.findAll", query="SELECT d FROM DocumentType d")
+public class DocumentType implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@Id
-    @GeneratedValue
-    @Column(name = "id_tipo_documento", nullable = false)
-	private Long idDocumentType;
-	@Column(name = "documento", nullable = false)
-	private String document;
-	/**
-	 * @return the idDocumentType
-	 */
-	public Long getIdDocumentType() {
-		return idDocumentType;
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="id_document_type")
+	private int idDocumentType;
+
+	@Column(name="document_type")
+	private String documentType;
+
+	//bi-directional many-to-one association to Person
+	@OneToMany(mappedBy="documentType")
+	private List<Person> persons;
+
+	public DocumentType() {
 	}
-	/**
-	 * @param idDocumentType the idDocumentType to set
-	 */
-	public void setIdDocumentType(Long idDocumentType) {
+
+	public int getIdDocumentType() {
+		return this.idDocumentType;
+	}
+
+	public void setIdDocumentType(int idDocumentType) {
 		this.idDocumentType = idDocumentType;
 	}
-	/**
-	 * @return the document
-	 */
-	public String getDocument() {
-		return document;
+
+	public String getDocumentType() {
+		return this.documentType;
 	}
-	/**
-	 * @param document the document to set
-	 */
-	public void setDocument(String document) {
-		this.document = document;
+
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
 	}
-	
-	
-	
+
+	public List<Person> getPersons() {
+		return this.persons;
+	}
+
+	public void setPersons(List<Person> persons) {
+		this.persons = persons;
+	}
+
+	public Person addPerson(Person person) {
+		getPersons().add(person);
+		person.setDocumentType(this);
+
+		return person;
+	}
+
+	public Person removePerson(Person person) {
+		getPersons().remove(person);
+		person.setDocumentType(null);
+
+		return person;
+	}
+
 }

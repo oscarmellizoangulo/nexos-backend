@@ -1,42 +1,48 @@
 package com.nexos.backend.api.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.NamedQuery;
 
+
+/**
+ * The persistent class for the item database table.
+ * 
+ */
 @Entity
-@Table(name = "item")
-public class Item {
+@NamedQuery(name="Item.findAll", query="SELECT i FROM Item i")
+public class Item implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@Id
-    @GeneratedValue
-    @Column(name = "id_item", nullable = false)
-	private Long idItem;
-	@Column(name = "item", nullable = false)
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="id_item")
+	private int idItem;
+
 	private String item;
-	/**
-	 * @return the idItem
-	 */
-	public Long getIdItem() {
-		return idItem;
+
+	public Item() {
 	}
-	/**
-	 * @param idItem the idItem to set
-	 */
-	public void setIdItem(Long idItem) {
+
+	public int getIdItem() {
+		return this.idItem;
+	}
+
+	public void setIdItem(int idItem) {
 		this.idItem = idItem;
 	}
-	/**
-	 * @return the item
-	 */
+
 	public String getItem() {
-		return item;
+		return this.item;
 	}
-	/**
-	 * @param item the item to set
-	 */
+
 	public void setItem(String item) {
 		this.item = item;
 	}
+
 }

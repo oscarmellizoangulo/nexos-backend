@@ -1,61 +1,58 @@
 package com.nexos.backend.api.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nexos.backend.api.beans.GenericMessageVO;
-import com.nexos.backend.api.beans.UserAuthenticationVO;
-import com.nexos.backend.api.beans.UserRecoveryVO;
-import com.nexos.backend.api.beans.UserVO;
+import com.nexos.backend.api.exception.MessageCode;
+import com.nexos.backend.api.exception.NexosServiceException;
 import com.nexos.backend.api.exception.UserNotFoundException;
-import com.nexos.backend.api.model.Persona;
 import com.nexos.backend.api.model.Rol;
-import com.nexos.backend.api.model.Usuario;
-import com.nexos.backend.api.model.UsuarioRol;
-import com.nexos.backend.api.repository.PersonaRepository;
+import com.nexos.backend.api.model.User;
+import com.nexos.backend.api.repository.PersonRepository;
 import com.nexos.backend.api.repository.RolRepository;
-import com.nexos.backend.api.repository.UsuarioRepository;
-import com.nexos.backend.api.repository.UsuarioRolRepository;
+import com.nexos.backend.api.repository.UserRepository;
+import com.nexos.backend.api.vo.GenericMessageVO;
+import com.nexos.backend.api.vo.RolVO;
+import com.nexos.backend.api.vo.UserAuthenticationVO;
+import com.nexos.backend.api.vo.UserRecoveryVO;
+import com.nexos.backend.api.vo.UserVO;
 
 @Service
 public class SecurityService {
 	
 	@Autowired
-	private UsuarioRepository usuarioRepository;
+	private UserRepository userRepository;
 	
-	@Autowired
-	private PersonaRepository personaRepository;
-	
-	@Autowired
-	private RolRepository rolRepository;
-	
-	@Autowired
-	private UsuarioRolRepository usuarioRolRepository; 
-	
-	public UserVO authenticate(UserAuthenticationVO userAuthenticationVO) {
-		List<Usuario> result = usuarioRepository.findByNombreUsuarioAndClave(userAuthenticationVO.getUserName(), userAuthenticationVO.getPassword());
-		Usuario usuario = !result.isEmpty() ? result.get(0) : null;
+	public UserVO authenticate(UserAuthenticationVO userAuthenticationVO) throws NexosServiceException {
+		List<User> result = userRepository.findByUserNameAndPassword(userAuthenticationVO.getUserName(), userAuthenticationVO.getPassword());
+		User user = !result.isEmpty() ? result.get(0) : null;
 		
-		if(usuario == null) {
-			throw new UserNotFoundException("Usuario no encontrado o clave invalida");
+		if(user == null) {
+			throw new NexosServiceException(MessageCode.USER_NOT_FOUND_OR_INVALID_PASSWORD);
 		}
 		
-		Persona persona = personaRepository.findById(usuario.getIdPersona()).get();
+		//Persona persona = personaRepository.findById(usuario.getIdPersona()).get();
 		
-		UsuarioRol usuarioRol = usuarioRolRepository.findByIdUsuario(usuario.getIdUsuario()).get(0);
+		//UsuarioRol usuarioRol = usuarioRolRepository.findByIdUsuario(usuario.getIdUsuario()).get(0);
 		
-		Rol rol = rolRepository.findById(usuarioRol.getIdRol()).get();
+		List<Rol> roles = user.getRols(); //rolRepository.findById(usuarioRol.getIdRol()).get();
 		
-		return new UserVO(usuario.getNombreUsuario(), usuario.getCorreoElectronico(), 
-				persona.getPrimerNombre() + persona.getPrimerApellido(), rol.getRol());
+		List<RolVO> rolVOs = new ArrayList<>();
+		for (Rol rol : roles) {
+			rolVOs.add(new RolVO(rol.getIdRol(), rol.getRol()));
+		}
+		
+		return new UserVO(user.getUserName(), user.getMail(), 
+				user.getPerson().getFirstName() + user.getPerson().getLastName(), rolVOs);
 	}
-	public GenericMessageVO recovery(UserRecoveryVO userRecoveryVO) {
-		Usuario usuario = usuarioRepository.findByNombreUsuario(userRecoveryVO.getUserName());
-		if(usuario == null) {
-			throw new UserNotFoundException("Usuario no encontrado");
+	public GenericMessageVO recovery(UserRecoveryVO userRecoveryVO) throws NexosServiceException {
+		User user = userRepository.findByUserName(userRecoveryVO.getUserName());
+		if(user == null) {
+			throw new NexosServiceException(MessageCode.USER_NOT_FOUND);
 		}
-		return new GenericMessageVO("Fue enviado un correo electronico con la clave a " + usuario.getCorreoElectronico());
+		return new GenericMessageVO(MessageCode.RECOVERY_PASSWORD_MESSAGE);
 	}
 }

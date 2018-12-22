@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.nexos.backend.api.model.DocumentType;
 
-public interface DocumentTypeRepository extends CrudRepository<DocumentType, Long>{
+public interface DocumentTypeRepository extends CrudRepository<DocumentType, Integer>{
 
 }

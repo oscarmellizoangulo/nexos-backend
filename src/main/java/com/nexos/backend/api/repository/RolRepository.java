@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.nexos.backend.api.model.Rol;
 
 @Repository
-public interface RolRepository extends CrudRepository<Rol, Long>{
+public interface RolRepository extends CrudRepository<Rol, Integer>{
 
 }
