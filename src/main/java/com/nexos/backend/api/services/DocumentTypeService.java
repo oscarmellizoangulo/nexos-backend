@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import com.nexos.backend.api.exception.MessageCode;
 import com.nexos.backend.api.exception.NexosServiceException;
 import com.nexos.backend.api.model.DocumentType;
-import com.nexos.backend.api.model.DocumentType;
 import com.nexos.backend.api.repository.DocumentTypeRepository;
-import com.nexos.backend.api.vo.DocumentTypeVO;
 import com.nexos.backend.api.vo.DocumentTypeVO;
 
 @Service

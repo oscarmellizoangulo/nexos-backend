@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import com.nexos.backend.api.exception.MessageCode;
 import com.nexos.backend.api.exception.NexosServiceException;
 import com.nexos.backend.api.model.Rol;
-import com.nexos.backend.api.model.Rol;
 import com.nexos.backend.api.repository.RolRepository;
-import com.nexos.backend.api.vo.RolVO;
 import com.nexos.backend.api.vo.RolVO;
 
 @Service
